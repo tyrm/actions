@@ -1,18 +1,16 @@
 #!/bin/bash
 
+# config
+commands=(".*" "__test__")
+
 # colors
 fbold=$(tput bold)
 fnormal=$(tput sgr0)
 fred='\033[0;31m'
 
 # check_requirements: Checks if the required dependencies are installed.
-# Arguments:
-#   $1: Description of the first argument.
-#   $2: Description of the second argument.
-# Returns:
-#   Exit status or output description.
 check_requirements() {
-    commands=("curl" "git")
+    commands=("rsync" "git")
     for cmd in "${commands[@]}"; do
         if ! command -v "$cmd" &> /dev/null; then
             echo -e "${fred}${fbold}Error: $cmd is not installed. Please install $cmd to use this script."
@@ -87,6 +85,5 @@ else
     mkdir ${ACTION}
 fi
 
-#find "${TMPDIR}/repo" -path "${TMPDIR}/repo/.git" -prune -o -type f -exec cp {} "${ACTION}/" \;
-find "${TMPDIR}/repo" \( -name '.*' -prune \) -o -type f -exec cp {} "${ACTION}/" \;
-
+# Copy data to repo
+rsync -av --exclude='.*' "${TMPDIR}/repo/" "${ACTION}/"
