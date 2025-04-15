@@ -87,3 +87,22 @@ fi
 
 # Copy data to repo
 rsync -av --exclude='.*' "${TMPDIR}/repo/" "${ACTION}/"
+
+# get the long and short SHA of the latest commit
+pushd "${TMPDIR}/repo"
+LONG_COMMIT_SHA=$(git rev-parse HEAD)
+SHORT_COMMIT_SHA=$(git rev-parse --short HEAD)
+popd > /dev/null
+
+# write the SHA to a JSON file
+JSON_FILE="${ACTION}/.pnmeta.json"
+cat <<EOF > "${JSON_FILE}"
+{
+  "repo": "${OWNER}/${ACTION}",
+  "version": "${VERSION}",
+  "long_commit_sha": "${LONG_COMMIT_SHA}",
+  "short_commit_sha": "${SHORT_COMMIT_SHA}"
+}
+EOF
+echo "Commit SHAs written to ${JSON_FILE}"
+
